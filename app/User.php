@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     public function contacts()
     {
-        return hasMany('App\Contact');
+        return hasMany(App\Contact::class);
     }
 
     /**
