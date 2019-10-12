@@ -9,4 +9,5 @@ Route::get('/', function()
 
 Route::resource('users', 'UserController')->except('create', 'edit');
 
-Route::post('auth', 'AuthController@login');
+Route::post('auth', 'AuthController@Login');
+Route::get('auth', 'AuthController@GetCurrentUser');

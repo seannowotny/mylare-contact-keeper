@@ -11,20 +11,15 @@ use App\Http\Resources\User as UserResource;
 
 class UserController extends Controller
 {
-    private function userDoesntExistResponse()
-    {
-        return response(["errors" => ["User doesn't exist"]], 400);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        return response(UserResource::collection(User::all()), 200);
-    }
+    // /**
+    //  * Display a listing of the resource.
+    //  *
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function index()
+    // {
+    //     return response(UserResource::collection(User::all()), 200);
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -52,7 +47,9 @@ class UserController extends Controller
         else
         {
             return response(["errors" => $validator->errors()->all()], 400);
-        }    
+        }  
+        
+        return response()->json(compact('token'));
     }
     private function createUser(array $data)
     {
@@ -66,68 +63,68 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(int $id)
-    {
-        $user = User::find($id);
-        if($user)
-        {
-            return response(new UserResource($user), 200);
-        }
-        else
-        {
-            return $this->userDoesntExistResponse();
-        }
-    }
+    // /**
+    //  * Display the specified resource.
+    //  *
+    //  * @param  \App\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function show(int $id)
+    // {
+    //     $user = User::find($id);
+    //     if($user)
+    //     {
+    //         return response(new UserResource($user), 200);
+    //     }
+    //     else
+    //     {
+    //         return $this->userDoesntExistResponse();
+    //     }
+    // }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, int $id)
-    {
-        $user = User::find($id);
+    // /**
+    //  * Update the specified resource in storage.
+    //  *
+    //  * @param  \Illuminate\Http\Request  $request
+    //  * @param  \App\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function update(Request $request, int $id)
+    // {
+    //     $user = User::find($id);
 
-        if($user)
-        {
-            $user->name = $request->input('name');
+    //     if($user)
+    //     {
+    //         $user->name = $request->input('name');
             
-            $user->save();
+    //         $user->save();
 
-            return response(new UserResource(User::find($id)), 200);
-        }
-        else
-        {
-            return $this->userDoesntExistResponse();
-        }
-    }
+    //         return response(new UserResource(User::find($id)), 200);
+    //     }
+    //     else
+    //     {
+    //         return $this->userDoesntExistResponse();
+    //     }
+    // }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(int $id)
-    {
-        $user = User::find($id);
+    // /**
+    //  * Remove the specified resource from storage.
+    //  *
+    //  * @param  \App\User  $user
+    //  * @return \Illuminate\Http\Response
+    //  */
+    // public function destroy(int $id)
+    // {
+    //     $user = User::find($id);
 
-        if($user)
-        {
-            $user->delete();
-            return response('Successfully Destroyed User', 200);
-        }
-        else
-        {
-            return $this->userDoesntExistResponse();
-        }
-    }
+    //     if($user)
+    //     {
+    //         $user->delete();
+    //         return response('Successfully Destroyed User', 200);
+    //     }
+    //     else
+    //     {
+    //         return $this->userDoesntExistResponse();
+    //     }
+    // }
 }

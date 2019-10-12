@@ -10,4 +10,9 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected function userDoesntExistResponse()
+    {
+        return response(["errors" => ["User doesn't exist"]], 400);
+    }
 }
