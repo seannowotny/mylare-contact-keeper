@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use Illuminate\Http\Request;
-use App\Http\Resources\User as UserResource;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Validator;
+use App\Http\Resources\User as UserResource;
 
 class UserController extends Controller
 {
-    private function userDoesntExist()
+    private function userDoesntExistResponse()
     {
-        return response()->json(["errors" => ["User doesn't exist"]]);
+        return response(["errors" => ["User doesn't exist"]], 400);
     }
 
     /**
@@ -22,7 +23,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::all());
+        return response(UserResource::collection(User::all()), 200);
     }
 
     /**
@@ -33,21 +34,36 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try
-        {
-            $user = User::create(
-            [
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => Hash::make($request->input('password'))
-            ]);
-        }
-        catch(Exception $e)
-        {
-            return response()->json(["errors" => ["Something went wrong"]]);
-        }
+        $data = $request->toArray();
 
-        return new UserResource(User::find($user->id));
+        $rules = [
+            'name' => 'required|min:3',
+            'email' => 'required|email',
+            'password' => 'required|min:8'
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->passes())
+        {
+            $user = $this->createUser($data);
+            return response(new UserResource($user), 201);
+        }   
+        else
+        {
+            return response(["errors" => $validator->errors()->all()], 400);
+        }    
+    }
+    private function createUser(array $data)
+    {
+        $user = User::create(
+        [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password'])
+        ]);
+
+        return new UserResource($user);
     }
 
     /**
@@ -59,13 +75,13 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = User::find($id);
-        if($user !== null)
+        if($user)
         {
-            return new UserResource($user);
+            return response(new UserResource($user), 200);
         }
         else
         {
-            return $this->userDoesntExist();
+            return $this->userDoesntExistResponse();
         }
     }
 
@@ -86,11 +102,11 @@ class UserController extends Controller
             
             $user->save();
 
-            return new UserResource(User::find($id));
+            return response(new UserResource(User::find($id)), 200);
         }
         else
         {
-            return $this->userDoesntExist();
+            return $this->userDoesntExistResponse();
         }
     }
 
@@ -107,10 +123,11 @@ class UserController extends Controller
         if($user)
         {
             $user->delete();
+            return response('Successfully Destroyed User', 200);
         }
         else
         {
-            return $this->userDoesntExist();
+            return $this->userDoesntExistResponse();
         }
     }
 }
