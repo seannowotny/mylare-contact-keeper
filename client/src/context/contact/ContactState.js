@@ -9,7 +9,7 @@ import type { Action } from './contactReducer';
 
 //#region types
 export type Contact = {|
-   _id: number,
+   id: number,
    type: "personal" | "professional",
    name: string,
    email: string,
@@ -116,7 +116,7 @@ const ContactState = (props: any) =>
       };
 
       try {
-         const res = await axios.put(`/api/contacts/${contact._id}`, contact, config);
+         const res = await axios.put(`/api/contacts/${contact.id}`, contact, config);
 
          dispatch({ 
             type: 'UPDATE_CONTACT', 

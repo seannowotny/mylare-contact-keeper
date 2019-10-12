@@ -29,7 +29,7 @@ export default (state: any, action: Action) => {
          return {
             ...state,
             contacts: state.contacts.map(contact => 
-               contact._id === action.payload._id 
+               contact.id === action.payload.id 
                ? action.payload : contact
             ),
             loading: false
@@ -37,7 +37,7 @@ export default (state: any, action: Action) => {
       case 'DELETE_CONTACT':
          return {
             ...state,
-            contacts: state.contacts.filter(contact => contact._id !== action.payload),
+            contacts: state.contacts.filter(contact => contact.id !== action.payload),
             loading: false
          };
       case 'CLEAR_CONTACTS':
