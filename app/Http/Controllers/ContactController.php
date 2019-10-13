@@ -53,7 +53,7 @@ class ContactController extends Controller
                 'phone' => $data['phone'],
             ]);
     
-            return new ContactResource($contact);
+            return response(new ContactResource($contact), 200);
         }
         else
         {
@@ -70,7 +70,35 @@ class ContactController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+        $data = $request->toArray();
+
+        $rules = [
+            'type' => 'required|in:personal,professional',
+            'name' => 'required|string|min:3',
+            'email' => 'required|email',
+            'phone' => 'required',
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        if($validator->passes())
+        {
+            $contact = $user->contacts()->find($id);
+
+            $contact->type = $data['type'];
+            $contact->name = $data['name'];
+            $contact->email = $data['email'];
+            $contact->phone = $data['phone'];
+
+            $contact->save();
+
+            return response(new ContactResource($contact), 200);
+        }
+        else
+        {
+            return response(["errors" => $validator->errors()->all()], 400);
+        }
     }
 
     /**
@@ -81,6 +109,12 @@ class ContactController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $contact = $user->contacts()->find($id);
+
+        $contact->delete();
+
+        return response(['msg' => 'Contact removed'], 200);
     }
 }
