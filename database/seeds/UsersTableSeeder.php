@@ -11,7 +11,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $usersCount = (int)$this->command->ask('How many users would you like?', 20);
+        $usersCount = (int)$this->command->ask('How many users would you like?', 2);
 
         if($usersCount < 1)
         {
