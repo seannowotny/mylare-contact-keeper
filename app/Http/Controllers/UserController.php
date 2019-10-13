@@ -32,7 +32,7 @@ class UserController extends Controller
         $data = $request->toArray();
 
         $rules = [
-            'name' => 'required|min:3',
+            'name' => 'required|string|min:3',
             'email' => 'required|email',
             'password' => 'required|min:8'
         ];
